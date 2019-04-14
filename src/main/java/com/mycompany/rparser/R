@@ -1,0 +1,111 @@
+grammar R;
+
+prog:   (   
+            E (';'|NL)* |   NL
+        )*EOF
+    ;
+
+E:  |   ID
+    |   STRING
+    |   INT
+    |   FLOAT
+    |   'NULL'
+    |   'NA'
+    |   'Inf'
+    |   'NaN'
+    |   'TRUE'
+    |   'FALSE'  
+    |   E '[' '[' sublist ']' ']'  
+    |   E '[' sublist ']'
+    |   E ('::'|':::') E
+    
+    |   E ('$'|'@') E
+    |   <assoc=right> E '^' E    
+    |   ('-'|'+') E
+    |   '~' E
+    
+    |   E ':' E
+    |   E USER_OP E 
+    |   E ('*'|'/') E
+    |   E ('+'|'-') E
+    |   E ('>'|'>='|'<'|'<='|'=='|'!=') E
+    |   '!' E
+    |   E ('&'|'&&') E
+    |   E ('|'|'||') E
+    |   E '~' E
+    |   E ('<-'|'<<-'|'='|'->'|'->>'|':=') E
+
+    |   'function' '(' funArglist? ')' E 
+    |   E '(' sublist ')'              
+    |   '{' EList '}' 
+    |   'if' '(' E ')' E
+    |   'if' '(' E ')' E 'else' E
+    |   'for' '(' ID 'in' E ')' E
+    |   'while' '(' E ')' E
+    |   'repeat' E
+    |   '?' E
+    |   'next'
+    |   'break'
+    |   '(' E ')'
+    ;
+
+EList:  
+        E ((';'|NL) E?)*
+        |
+        ;
+
+funArglist : funArg (',' funArg)* ;
+
+funArg:   ID
+    |   ID '=' E
+    |   '...'
+    |   '.'
+    ;
+
+sublist : sub (',' sub)* ;
+
+sub :   E
+    |   ID '='
+    |   ID '=' E
+    |   STRING '='
+    |   STRING '=' E
+    |   'NULL' '='
+    |   'NULL' '=' E
+    |   '...'
+    |   '.'
+    |
+    ;
+
+INT :   DIGIT+ [Ll]? ;
+
+FLOAT:  DIGIT+ '.' DIGIT* EXP? [Ll]?
+    |   DIGIT+ EXP? [Ll]?
+    |   '.' DIGIT+ EXP? [Ll]?
+    ;
+
+fragment
+DIGIT:  '0'..'9' ; 
+
+fragment
+EXP :   ('E' | 'e') ('+' | '-')? INT ;
+
+STRING
+    :   '"' ( ~[\\"] )*? '"'
+    |   '\'' ( ~[\\'] )*? '\''
+    |   '`' ( ~[\\'] )*? '`'
+    ;
+
+
+ID  :   '.' (LETTER|'_'|'.') (LETTER|DIGIT|'_'|'.')*
+    |   LETTER (LETTER|DIGIT|'_'|'.')*
+    ;
+    
+fragment 
+LETTER  : [a-zA-Z] ;
+
+USER_OP :   '%' .*? '%' ;
+
+COMMENT :   '#' .*? '\r'? '\n' -> type(NL) ;
+
+NL      :   '\r'? '\n' ;
+

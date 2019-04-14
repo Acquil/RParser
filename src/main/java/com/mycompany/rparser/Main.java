@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.v4.runtime.*;
@@ -24,18 +25,19 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
+        System.out.println("Welcome to R  Parser!");
+        
         String inputFile = null;
-//        if ( args.length>0 ) 
+        Scanner in = new Scanner(System.in);
+        String ch ="y";
+
         inputFile = "/home/aquil/sample.r";
         InputStream is = System.in;
         
-        if ( inputFile!=null ) {
-            try {
-                is = new FileInputStream(inputFile);
-            } catch (FileNotFoundException ex) {
+        try {
+            is = new FileInputStream(inputFile);
+        } catch (FileNotFoundException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
         
         CharStream input=null;
@@ -50,23 +52,31 @@ public class Main {
         
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         
-
         RemoveWhiteSpace filter = new RemoveWhiteSpace(tokens);
         filter.stream(); 
         tokens.reset();
-        
+         
+        System.out.println("Token Table:");
+        tokens.getTokens().forEach((tok) -> {
+            System.out.println(tok);
+        });
 
-        // Print tokens 
-        for (Object tok : tokens.getTokens()) {
-			System.out.println(tok);
-        }
+        System.out.println("\n\n");
+
         
         RParser parser = new RParser(tokens);
         parser.setBuildParseTree(true);
         RuleContext tree = parser.prog();
 
-        
-        System.out.println("\nOUTPUT:\n"+tree.toStringTree(parser));
+
+        if(parser.getNumberOfSyntaxErrors()==0)
+        {
+            System.out.println("No Errors!");
+        }
+        else{
+            System.err.println("Errors Are Present!");            
+        }
+            
     }
     
 }

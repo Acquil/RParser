@@ -6,7 +6,6 @@ options { tokenVocab=R; }
 protected int curlies = 0;
 }
 
-// TODO: MAKE THIS GET ONE COMMAND ONLY
 stream : (elem|NL|';')* EOF ;
 
 eat :   (NL {((WritableToken)$NL).setChannel(Token.HIDDEN_CHANNEL);})+ ;
@@ -30,12 +29,52 @@ elem:   op eat?
         }
     ;
 
-atom:   'next' | 'break' | ID | STRING | HEX | INT | FLOAT | COMPLEX | 'NULL'
-    |   'NA' | 'Inf' | 'NaN' | 'TRUE' | 'FALSE'
+atom:   'next' 
+        |'break' 
+        | ID 
+        | STRING 
+        | INT 
+        | FLOAT 
+        | 'NULL'
+        | 'NA' 
+        | 'Inf' 
+        | 'NaN' 
+        | 'TRUE' 
+        | 'FALSE'
     ;
 
-op  :   '+'|'-'|'*'|'/'|'^'|'<'|'<='|'>='|'>'|'=='|'!='|'&'|'&&'|USER_OP|
-        'repeat'|'in'|'?'|'!'|'='|':'|'~'|'$'|'@'|'<-'|'->'|'='|'::'|':::'|
-        ','|'...'|'||'| '|'
+op  :   '+'
+        |'-'
+        |'*'
+        |'/'
+        |'^'
+        |'<'
+        |'<='
+        |'>='
+        |'>'
+        |'=='
+        |'!='
+        |'&'
+        |'&&'
+        |'|'
+        |'||'
+        |USER_OP
+        |'repeat'
+        |'in'
+        |'?'
+        |'!'
+        |'='
+        |':'
+        |'~'
+        |'$'
+        |'@'
+        |'<-'
+        |'->'
+        |'='
+        |'::'
+        |':::'
+        |','
+        |'...'
+        
     ;
 
